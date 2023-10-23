@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "samples"
+		},
+		{
+			"path": "samples-deno"
+		},
+		{
+			"path": "packages/erniebot"
+		},
+		{
+			"path": "."
+		},
+	],
+	"settings": {}
+}
