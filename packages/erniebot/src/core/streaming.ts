@@ -1,4 +1,4 @@
-import { EBError, APIError } from '.'
+import { EBError, APIError } from './error'
 
 type Bytes = string | ArrayBuffer | Uint8Array | Buffer | null | undefined
 

@@ -1,14 +1,5 @@
+export * from './backends'
 export * from './core'
-export * from './erniebot'
-
-export {
-  EBError,
-  UnsupportedAPITypeError,
-  InvalidArgumentError,
-  APIError,
-  APIConnectionError,
-  APIConnectionTimeoutError,
-  APIUserAbortError,
-} from './core/error'
-
+export * from './cross-platform'
 export * from './resources'
+export * from './erniebot'

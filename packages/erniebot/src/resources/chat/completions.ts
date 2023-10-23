@@ -1,6 +1,4 @@
-import { APIPromise, APIRequestOptions } from '../../core/client'
-import { Stream } from '../../core/streaming'
-
+import { APIPromise, APIRequestOptions, Stream } from '../../core'
 import { APIResource } from '../resource'
 import { CompletionUsage } from '../completions'
 
