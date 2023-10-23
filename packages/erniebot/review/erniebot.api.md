@@ -438,7 +438,7 @@ export class ErnieBot extends APIClient {
   // (undocumented)
   options: EBOptions
   // (undocumented)
-  static version: string | undefined
+  static version: string
 }
 
 // @public (undocumented)
