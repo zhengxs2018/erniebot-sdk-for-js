@@ -1,0 +1,65 @@
+{
+  "name": "@zhengxs/erniebot-cli",
+  "version": "0.1.0-alpha.0",
+  "keywords": [
+    "erniebot",
+    "erniebot-cli"
+  ],
+  "description": "非官方 JS-SDK，支持命令行调用文心大模型",
+  "type": "commonjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist-types/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist-types/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist-types/index.d.ts",
+        "./dist-types/*"
+      ]
+    }
+  },
+  "bin": {
+    "erniebot": "./bin/erniebot.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "dist-types"
+  ],
+  "scripts": {
+    "watch": "vite build --watch",
+    "build": "vite build && npm run extract-api",
+    "erniebot": "./bin/erniebot.mjs",
+    "extract-api": "mkdirp ./review && api-extractor run --local"
+  },
+  "dependencies": {
+    "@zhengxs/erniebot": "workspace:^",
+    "ansi-colors": "^4.1.3",
+    "commander": "^11.1.0",
+    "enquirer": "^2.4.1",
+    "ora": "^7.0.1"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/zhengxs2018/erniebot#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhengxs2018/erniebot",
+    "directory": "packages/erniebot-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/zhengxs2018/erniebot/issues"
+  },
+  "author": "zhengxs <zhengxs2018@gmail.com>",
+  "engines": {
+    "node": ">=18.x.x"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,53 @@
+{
+  "name": "@zhengxs/erniebot",
+  "version": "0.1.0-alpha.0",
+  "keywords": [
+    "erniebot"
+  ],
+  "description": "非官方 JS-SDK，可以调用文心大模型的能力，包含文本创作、通用对话、语义向量、AI作图等",
+  "type": "commonjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist-types/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist-types/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist-types/index.d.ts",
+        "./dist-types/*"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "dist-types"
+  ],
+  "scripts": {
+    "watch": "vite build --watch",
+    "build": "vite build && npm run extract-api",
+    "extract-api": "mkdirp ./review && api-extractor run --local"
+  },
+  "dependencies": { },
+  "devDependencies": {},
+  "homepage": "https://github.com/zhengxs2018/erniebot#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhengxs2018/erniebot",
+    "directory": "packages/erniebot"
+  },
+  "bugs": {
+    "url": "https://github.com/zhengxs2018/erniebot/issues"
+  },
+  "author": "zhengxs <zhengxs2018@gmail.com>",
+  "engines": {
+    "node": ">=18.x.x"
+  },
+  "license": "MIT"
+}

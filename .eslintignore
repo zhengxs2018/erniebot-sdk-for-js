@@ -1,0 +1,5 @@
+dist/
+dist-*/
+temp/
+node_modules
+doc/
