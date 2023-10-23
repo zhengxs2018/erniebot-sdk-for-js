@@ -19,7 +19,7 @@ export default defineConfig({
     }),
   ],
   define: {
-    __VERSION__: JSON.stringify(pkg.version),
+    'process.env.PKG_VERSION': JSON.stringify(pkg.version),
   },
   build: {
     sourcemap: true,

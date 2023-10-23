@@ -114,8 +114,7 @@ export class APIPromise<T> extends Promise<T> {
   }
 }
 
-export interface FinalRequestOptions<Body = any>
-  extends Omit<RequestInit, 'body' | 'headers'> {
+export interface FinalRequestOptions<Body = any> extends Omit<RequestInit, 'body' | 'headers'> {
   path: string
 
   body?: Body | Record<'body', BodyInit | null> | null

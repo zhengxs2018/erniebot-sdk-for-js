@@ -18,7 +18,7 @@ export const getGlobalObject = <T>() => globalObject as T
 
 export function debug(action: string, ...args: any[]) {
   if (inNode && process.env['DEBUG'] === 'true') {
-    console.log(`ErnieBot:DEBUG:${action}`, ...args);
+    console.log(`ErnieBot:DEBUG:${action}`, ...args)
   }
 }
 
@@ -35,4 +35,4 @@ export const safeJSON = (text: string) => {
   }
 }
 
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

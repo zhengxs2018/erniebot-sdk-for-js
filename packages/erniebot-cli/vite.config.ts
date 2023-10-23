@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import dts from 'vite-plugin-dts'
 
+import pkg from './package.json'
+
 /**
  * vite config
  * @see https://vitejs.dev/
@@ -16,6 +18,9 @@ export default defineConfig({
       outDir: './dist-types',
     }),
   ],
+  define: {
+    'process.env.PKG_VERSION': JSON.stringify(pkg.version),
+  },
   build: {
     sourcemap: true,
     copyPublicDir: false,

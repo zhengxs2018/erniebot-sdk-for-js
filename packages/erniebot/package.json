@@ -34,7 +34,7 @@
     "build": "vite build && npm run extract-api",
     "extract-api": "mkdirp ./review && api-extractor run --local"
   },
-  "dependencies": { },
+  "dependencies": {},
   "devDependencies": {},
   "homepage": "https://github.com/zhengxs2018/erniebot#readme",
   "repository": {

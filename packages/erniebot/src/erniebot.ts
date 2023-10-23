@@ -66,7 +66,7 @@ export class ErnieBot extends APIClient {
 
     if (token == null) {
       throw new EBError(
-        "The EB_ACCESS_TOKEN environment variable is missing or empty; either provide it, or instantiate the OpenAI client with an token option, like new OpenAI({ token: 'My API Access Token' }).",
+        "The EB_ACCESS_TOKEN environment variable is missing or empty; either provide it, or instantiate the ErnieBot client with an token option, like new ErnieBot({ token: 'My API Access Token' }).",
       )
     }
 

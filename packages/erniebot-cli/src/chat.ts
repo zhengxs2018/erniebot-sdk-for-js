@@ -5,7 +5,7 @@ import enquirer from 'enquirer'
 
 import { ErnieBot, EBOptions, ChatCompletionCreateParamsNonStreaming } from '@zhengxs/erniebot'
 
-import { version } from '../package.json'
+import { VERSION } from './version'
 
 const banner = ` _____ ____  _   _ ___ _____   ____        _
 | ____|  _ \\| \\ | |_ _| ____| | __ )  ___ | |_
@@ -13,7 +13,7 @@ const banner = ` _____ ____  _   _ ___ _____   ____        _
 | |___|  _ <| |\\  || || |___  | |_) | (_) | |_
 |_____|_| \\_\\_| \\_|___|_____| |____/ \\___/ \\__|
 
-JS-SDK v${ErnieBot.version} | CLI v${version}
+JS-SDK v${ErnieBot.version} | CLI v${VERSION}
 =====================
 
 你好，我是文心一言 ERNIE Bot。
@@ -62,10 +62,11 @@ cmd.action(async (options: EBOptions & { model?: string }) => {
     messages: [],
   }
 
-  let input: { value: string }
+  type UserInput = { value: string }
+  let input: UserInput
 
   while (true) {
-    input = await enquirer.prompt<{ value: string }>({
+    input = await enquirer.prompt<UserInput>({
       type: 'text',
       name: 'value',
       message: '你说',
@@ -77,13 +78,15 @@ cmd.action(async (options: EBOptions & { model?: string }) => {
     })
 
     if (input.value === '/') {
-      input = await enquirer.prompt({
+      input = await enquirer.prompt<UserInput>({
         type: 'autocomplete',
-        name: 'content',
+        name: 'value',
         message: '选择指令',
-        choices: ['/new', '/retry', '/exit'],
+        choices: ['/new', '/continue', '/retry', '/exit'],
       })
     }
+
+    if (input.value === '/continue') continue
 
     if (input.value === '/exit') {
       console.clear()
