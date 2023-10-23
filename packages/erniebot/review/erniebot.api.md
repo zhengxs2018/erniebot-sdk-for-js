@@ -8,7 +8,45 @@
 import type { Agent } from 'node:http'
 
 // @public (undocumented)
-export const AIStudioBackend: EBBackend
+export class AIStudioBackend implements EBBackendObject {
+  constructor(api: ErnieBot)
+  // (undocumented)
+  apiType: string
+  // (undocumented)
+  authHeaders(): {
+    authorization: string
+  }
+  // (undocumented)
+  baseURL: string
+  // (undocumented)
+  resources: {
+    '/chat/completions': {
+      resourceId: string
+      models: {
+        'ernie-bot': {
+          modelId: string
+        }
+        'ernie-bot-turbo': {
+          modelId: string
+        }
+        'ernie-bot-4': {
+          modelId: string
+        }
+      }
+    }
+    '/embeddings': {
+      resourceId: string
+      models: {
+        'ernie-text-embedding': {
+          modelId: string
+        }
+      }
+    }
+  }
+}
+
+// @public (undocumented)
+export const aiStudioBackend: EBBackendFunction
 
 // @public (undocumented)
 export class APIClient {
@@ -396,27 +434,41 @@ export const createResponseHeaders: (headers: Awaited<ReturnType<Fetch>>['header
 export function debug(action: string, ...args: any[]): void
 
 // @public (undocumented)
-export interface EBBackend {
+export type EBBackend = EBBackendFunction | EBBackendObject
+
+// @public (undocumented)
+export type EBBackendFunction = (erniebot: ErnieBot) => EBBackendObject
+
+// @public (undocumented)
+export interface EBBackendObject {
   // (undocumented)
   apiType: string
   // (undocumented)
+  authHeaders?: (options: FinalRequestOptions<any>) => Record<string, string>
+  // (undocumented)
   baseURL: string
   // (undocumented)
-  parseResponse: (props: APIResponseProps) => PromiseOrValue<any>
+  parseResponse?: (props: APIResponseProps) => Promise<any>
+  // (undocumented)
+  prepareRequest?: (request: RequestInit) => Promise<void>
   // (undocumented)
   resources: Record<string, APIInfo>
+}
+
+// @public (undocumented)
+export interface EBConfig {
+  ak?: string | null
+  sk?: string | null
+  token?: string | null
 }
 
 // @public (undocumented)
 export class EBError extends Error {}
 
 // @public (undocumented)
-export interface EBOptions extends APIClientOptions {
-  ak?: string | null
+export interface EBOptions extends APIClientOptions, EBConfig {
   apiType?: APIType
   dangerouslyAllowBrowser?: boolean
-  sk?: string | null
-  token?: string | null
 }
 
 // @public (undocumented)
@@ -445,14 +497,12 @@ export class Embeddings extends APIResource {
 
 // @public (undocumented)
 export class ErnieBot extends APIClient {
-  constructor(options: EBOptions)
+  constructor(options?: EBOptions | undefined)
   // (undocumented)
   get apiType(): APIType
   set apiType(apiType: APIType)
   // (undocumented)
-  protected authHeaders(): {
-    authorization: string
-  }
+  protected authHeaders(options: FinalRequestOptions<any>): HTTPHeaders
   // (undocumented)
   static backends: Record<string, EBBackend>
   // (undocumented)
@@ -460,15 +510,19 @@ export class ErnieBot extends APIClient {
   // (undocumented)
   chat: Chat
   // (undocumented)
+  config: EBConfig
+  // (undocumented)
   embeddings: Embeddings
   // (undocumented)
   protected getUserAgent(): string
   // (undocumented)
-  static makeBackend(apiType: APIType): EBBackend
+  makeBackend(apiType: APIType): EBBackendObject
   // (undocumented)
-  options: EBOptions
+  options?: EBOptions | undefined
   // (undocumented)
-  protected parseResponse(props: APIResponseProps): any
+  protected parseResponse<T>(props: APIResponseProps): Promise<T>
+  // (undocumented)
+  protected prepareRequest(request: RequestInit): Promise<void>
   // (undocumented)
   static version: string
 }
