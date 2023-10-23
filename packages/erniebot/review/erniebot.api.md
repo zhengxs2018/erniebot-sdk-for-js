@@ -19,6 +19,8 @@ export class AIStudioBackend implements EBBackendObject {
   // (undocumented)
   baseURL: string
   // (undocumented)
+  parseResponse<T>({ response, options, controller }: APIResponseProps): Promise<T>
+  // (undocumented)
   resources: {
     '/chat/completions': {
       resourceId: string
