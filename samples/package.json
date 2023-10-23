@@ -7,7 +7,7 @@
     "demo": "node --no-warnings -r ./setup.cjs"
   },
   "dependencies": {
-    "@zhengxs/erniebot": "workspace:^",
+    "@zhengxs/erniebot": "workspace:*",
     "dotenv": "^16.3.1",
     "eventsource-parser": "^1.1.1",
     "jiti": "^1.20.0"
