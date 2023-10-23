@@ -8,6 +8,9 @@
 import type { Agent } from 'node:http'
 
 // @public (undocumented)
+export const AIStudioBackend: EBBackend
+
+// @public (undocumented)
 export class APIClient {
   constructor(options: APIClientOptions)
   // (undocumented)
@@ -15,18 +18,14 @@ export class APIClient {
   // (undocumented)
   baseURL: string
   // (undocumented)
-  buildURL({ path, query }: FinalRequestOptions): string
+  protected buildURL({ path, query }: FinalRequestOptions): string
   // (undocumented)
   protected calculateContentLength(body: BodyInit | null): string | null
   protected defaultHeaders(options: FinalRequestOptions): HTTPHeaders
-  // Warning: (ae-forgotten-export) The symbol "HTTPSearchParams" needs to be exported by the entry point index.d.ts
-  //
   // (undocumented)
   protected defaultQuery(): HTTPSearchParams
   // (undocumented)
   delete<Rsp>(path: string, opts?: APIRequestOptions): APIPromise<Rsp>
-  // Warning: (ae-forgotten-export) The symbol "Fetch" needs to be exported by the entry point index.d.ts
-  //
   // (undocumented)
   fetch: Fetch
   // (undocumented)
@@ -38,14 +37,10 @@ export class APIClient {
   ): Promise<Response>
   // (undocumented)
   get<Rsp>(path: string, opts?: APIRequestOptions): APIPromise<Rsp>
-  // Warning: (ae-forgotten-export) The symbol "HTTPClient" needs to be exported by the entry point index.d.ts
-  //
   // (undocumented)
   protected getRequestClient(): HTTPClient
   // (undocumented)
   protected getUserAgent(): string
-  // Warning: (ae-forgotten-export) The symbol "HTTPHeaders" needs to be exported by the entry point index.d.ts
-  //
   // (undocumented)
   headers?: HTTPHeaders
   // (undocumented)
@@ -59,6 +54,8 @@ export class APIClient {
   ): APIError
   // (undocumented)
   maxRetries?: number
+  // (undocumented)
+  protected parseResponse<T>({ response, options, controller }: APIResponseProps): Promise<T>
   // (undocumented)
   patch<Rsp>(path: string, opts?: APIRequestOptions): APIPromise<Rsp>
   // (undocumented)
@@ -137,14 +134,21 @@ export class APIError extends EBError {
   readonly type: string | undefined
 }
 
+// @public (undocumented)
+export interface APIInfo {
+  // (undocumented)
+  models: {
+    [key: string]: {
+      modelId: string
+    }
+  }
+  // (undocumented)
+  resourceId: string
+}
+
 // @public
 export class APIPromise<T> extends Promise<T> {
-  // Warning: (ae-forgotten-export) The symbol "APIResponseProps" needs to be exported by the entry point index.d.ts
-  // Warning: (ae-forgotten-export) The symbol "PromiseOrValue" needs to be exported by the entry point index.d.ts
-  constructor(
-    responsePromise: Promise<APIResponseProps>,
-    parseResponse?: (props: APIResponseProps) => PromiseOrValue<T>,
-  )
+  constructor(responsePromise: Promise<APIResponseProps>, parseResponse: (props: APIResponseProps) => PromiseOrValue<T>)
   // (undocumented)
   asResponse(): Promise<Response>
   // (undocumented)
@@ -188,6 +192,13 @@ export class APIResource {
 }
 
 // @public (undocumented)
+export type APIResponseProps = {
+  response: Response
+  options: FinalRequestOptions
+  controller: AbortController
+}
+
+// @public (undocumented)
 export type APIType = (string & NonNullable<unknown>) | 'aistudio'
 
 // @public (undocumented)
@@ -196,6 +207,15 @@ export class APIUserAbortError extends APIError {
   // (undocumented)
   readonly status: undefined
 }
+
+// @public (undocumented)
+export function calculateContentLength(body: unknown): string | null
+
+// @public (undocumented)
+export function calculateDefaultRetryTimeoutMillis(retriesRemaining: number, maxRetries: number): number
+
+// @public (undocumented)
+export const castToError: (err: any) => Error
 
 // @public (undocumented)
 export class Chat extends APIResource {
@@ -370,6 +390,24 @@ export namespace CreateEmbeddingResponse {
 }
 
 // @public (undocumented)
+export const createResponseHeaders: (headers: Awaited<ReturnType<Fetch>>['headers']) => Record<string, string>
+
+// @public (undocumented)
+export function debug(action: string, ...args: any[]): void
+
+// @public (undocumented)
+export interface EBBackend {
+  // (undocumented)
+  apiType: string
+  // (undocumented)
+  baseURL: string
+  // (undocumented)
+  parseResponse: (props: APIResponseProps) => PromiseOrValue<any>
+  // (undocumented)
+  resources: Record<string, APIInfo>
+}
+
+// @public (undocumented)
 export class EBError extends Error {}
 
 // @public (undocumented)
@@ -412,25 +450,17 @@ export class ErnieBot extends APIClient {
   get apiType(): APIType
   set apiType(apiType: APIType)
   // (undocumented)
-  authHeaders(): {
+  protected authHeaders(): {
     authorization: string
   }
-  // Warning: (ae-forgotten-export) The symbol "EBBackend" needs to be exported by the entry point index.d.ts
-  //
   // (undocumented)
   static backends: Record<string, EBBackend>
   // (undocumented)
-  buildURL(options: FinalRequestOptions): string
+  protected buildURL(options: FinalRequestOptions): string
   // (undocumented)
   chat: Chat
   // (undocumented)
   embeddings: Embeddings
-  // Warning: (ae-forgotten-export) The symbol "APIInfo" needs to be exported by the entry point index.d.ts
-  //
-  // (undocumented)
-  getApiInfo(path: string): APIInfo
-  // (undocumented)
-  getRequestPath(path: string, model: string): string
   // (undocumented)
   protected getUserAgent(): string
   // (undocumented)
@@ -438,8 +468,13 @@ export class ErnieBot extends APIClient {
   // (undocumented)
   options: EBOptions
   // (undocumented)
+  protected parseResponse(props: APIResponseProps): any
+  // (undocumented)
   static version: string
 }
+
+// @public (undocumented)
+export type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>
 
 // @public (undocumented)
 export interface FinalRequestOptions<Body = any> extends Omit<RequestInit, 'body' | 'headers'> {
@@ -461,8 +496,67 @@ export interface FinalRequestOptions<Body = any> extends Omit<RequestInit, 'body
   timeout?: number
 }
 
+// @public
+export const getGlobalObject: <T>() => T
+
+// @public (undocumented)
+export const globalObject: Window & typeof globalThis
+
+// @public (undocumented)
+export type HTTPClient = {
+  fetch: Fetch
+}
+
+// @public (undocumented)
+export type HTTPHeaders = Record<string, string>
+
+// @public (undocumented)
+export type HTTPMethods = 'get' | 'post' | 'put' | 'patch' | 'delete'
+
+// @public (undocumented)
+export type HTTPSearchParams = URLSearchParams | Record<string, string>
+
+// @public
+export const inBrowser: boolean
+
+// @public (undocumented)
+export const inDeno: boolean
+
+// @public
+export const inNode: boolean
+
 // @public (undocumented)
 export class InvalidArgumentError extends EBError {}
+
+// @public (undocumented)
+export const isMultipartBody: (body: any) => body is MultipartBody
+
+// @public (undocumented)
+export function mergeHTTPSearchParams(
+  target: HTTPSearchParams | undefined | null,
+  source: HTTPSearchParams | undefined | null,
+): URLSearchParams
+
+// @public (undocumented)
+export class MultipartBody {
+  // (undocumented)
+  get [Symbol.toStringTag](): string
+  constructor(body: any)
+  // (undocumented)
+  body: any
+}
+
+// @public (undocumented)
+export type PromiseOrValue<T> = T | Promise<T>
+
+// @public (undocumented)
+export const readEnv: (env: string) => string | undefined
+
+// @public (undocumented)
+export const safeJSON: (text: string) => any
+
+// @public (undocumented)
+export const sleep: (ms: number) => Promise<unknown>
 
 // @public (undocumented)
 export class Stream<Item> implements AsyncIterable<Item> {

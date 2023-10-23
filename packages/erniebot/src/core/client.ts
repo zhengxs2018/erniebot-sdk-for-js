@@ -14,44 +14,13 @@ import {
   mergeHTTPSearchParams,
   isMultipartBody,
 } from '../cross-platform'
-import { Stream } from './streaming'
 
+import { Stream } from './streaming'
 import { APIError, APIUserAbortError, APIConnectionError, APIConnectionTimeoutError } from './error'
 
-async function defaultParseResponse<T>(props: APIResponseProps): Promise<T> {
-  const { response } = props
-  const headers = response.headers
-  if (props.options.stream) {
-    debug('response', response.status, response.url, headers, response.body)
+export type PromiseOrValue<T> = T | Promise<T>
 
-    // Note: there is an invariant here that isn't represented in the type system
-    // that if you set `stream: true` the response type must also be `Stream<T>`
-    return Stream.fromSSEResponse(response, props.controller) as any
-  }
-
-  const contentType = headers.get('content-type')
-  if (contentType?.includes('application/json')) {
-    const json = await response.json()
-
-    debug('response', response.status, response.url, headers, json)
-
-    if (json.errorCode === 0) return json.result as T
-
-    const message = json.errorMsg
-    return Promise.reject(APIError.generate(json.errorCode, json, message, headers))
-  }
-
-  // TODO handle blob, arraybuffer, other content types, etc.
-  const text = await response.text()
-  debug('response', response.status, response.url, headers, text)
-  return text as any as T
-}
-
-type PromiseOrValue<T> = T | Promise<T>
-
-type APIRequestBody = Record<string, unknown>
-
-type APIResponseProps = {
+export type APIResponseProps = {
   response: Response
   options: FinalRequestOptions
   controller: AbortController
@@ -66,7 +35,7 @@ export class APIPromise<T> extends Promise<T> {
 
   constructor(
     private responsePromise: Promise<APIResponseProps>,
-    private parseResponse: (props: APIResponseProps) => PromiseOrValue<T> = defaultParseResponse,
+    private parseResponse: (props: APIResponseProps) => PromiseOrValue<T>,
   ) {
     super((resolve) => {
       // this is maybe a bit weird but this has to be a no-op to not implicitly
@@ -228,7 +197,7 @@ export class APIClient {
   }
 
   request<Rsp = any>(options: FinalRequestOptions, remainingRetries: number | null = null): APIPromise<Rsp> {
-    return new APIPromise(this.makeRequest(options, remainingRetries))
+    return new APIPromise(this.makeRequest(options, remainingRetries), (props) => this.parseResponse<Rsp>(props))
   }
 
   private methodRequest<Rsp = any>(method: HTTPMethods, path: string, options?: APIRequestOptions): APIPromise<Rsp> {
@@ -256,6 +225,31 @@ export class APIClient {
       'User-Agent': this.getUserAgent(),
       ...this.authHeaders(options),
     }
+  }
+
+  protected async parseResponse<T>({ response, options, controller }: APIResponseProps): Promise<T> {
+    const headers = response.headers
+    if (options.stream) {
+      debug('response', response.status, response.url, headers, response.body)
+
+      // Note: there is an invariant here that isn't represented in the type system
+      // that if you set `stream: true` the response type must also be `Stream<T>`
+      return Stream.fromSSEResponse(response, controller) as any
+    }
+
+    const contentType = headers.get('content-type')
+    if (contentType?.includes('application/json')) {
+      const json = await responseon()
+
+      debug('response', response.status, response.url, headers, json)
+
+      return json as T
+    }
+
+    // TODO handle blob, arraybuffer, other content types, etc.
+    const text = await response.text()
+    debug('response', response.status, response.url, headers, text)
+    return text as any as T
   }
 
   protected getUserAgent(): string {
@@ -300,7 +294,7 @@ export class APIClient {
       .finally(() => clearTimeout(timeout))
   }
 
-  buildURL({ path, query }: FinalRequestOptions): string {
+  protected buildURL({ path, query }: FinalRequestOptions): string {
     const url = new URL(path, this.baseURL)
     const searchParams = mergeHTTPSearchParams(query, this.defaultQuery())
 

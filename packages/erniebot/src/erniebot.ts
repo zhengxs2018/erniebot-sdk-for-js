@@ -2,6 +2,7 @@ import { AIStudioBackend, EBBackend } from './backends'
 import {
   APIClient,
   APIClientOptions,
+  APIResponseProps,
   FinalRequestOptions,
   EBError,
   UnsupportedAPITypeError,
@@ -74,18 +75,32 @@ export class ErnieBot extends APIClient {
     this._token = token
   }
 
+  get apiType() {
+    return this._apiType
+  }
+
+  set apiType(apiType: APIType) {
+    this._backend = ErnieBot.makeBackend(apiType)
+    this._apiType = apiType
+  }
+
   chat: Chat = new Chat(this)
+
   embeddings: Embeddings = new Embeddings(this)
 
-  override authHeaders() {
+  protected getUserAgent(): string {
+    return `ErnieBot/JS-SDK ${VERSION}`
+  }
+
+  protected override authHeaders() {
     return { authorization: `token ${this._token}` }
   }
 
-  getApiInfo(path: string) {
-    return this._backend.resources[path]
+  protected override parseResponse(props: APIResponseProps) {
+    return this._backend.parseResponse(props)
   }
 
-  getRequestPath(path: string, model: string): string {
+  private getRequestPath(path: string, model: string): string {
     const backend = this._backend
     const apiInfo = backend.resources[path]
     if (!apiInfo) return `${this.baseURL}${path}`
@@ -97,7 +112,7 @@ export class ErnieBot extends APIClient {
     throw new InvalidArgumentError(`${model} is not a supported model.`)
   }
 
-  override buildURL(options: FinalRequestOptions): string {
+  protected override buildURL(options: FinalRequestOptions): string {
     const model = options?.body?.model || ''
     const url = new URL(this.getRequestPath(options.path, model))
 
@@ -108,19 +123,6 @@ export class ErnieBot extends APIClient {
     }
 
     return url.toString()
-  }
-
-  protected getUserAgent(): string {
-    return `ErnieBot/JS-SDK ${VERSION}`
-  }
-
-  get apiType() {
-    return this._apiType
-  }
-
-  set apiType(apiType: APIType) {
-    this._backend = ErnieBot.makeBackend(apiType)
-    this._apiType = apiType
   }
 
   static makeBackend(apiType: APIType) {
