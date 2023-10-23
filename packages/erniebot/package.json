@@ -36,14 +36,14 @@
   },
   "dependencies": {},
   "devDependencies": {},
-  "homepage": "https://github.com/zhengxs2018/erniebot#readme",
+  "homepage": "https://github.com/zhengxs2018/erniebot-sdk-for-js#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhengxs2018/erniebot",
+    "url": "https://github.com/zhengxs2018/erniebot-sdk-for-js",
     "directory": "packages/erniebot"
   },
   "bugs": {
-    "url": "https://github.com/zhengxs2018/erniebot/issues"
+    "url": "https://github.com/zhengxs2018/erniebot-sdk-for-js/issues"
   },
   "author": "zhengxs <zhengxs2018@gmail.com>",
   "engines": {
