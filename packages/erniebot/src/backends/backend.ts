@@ -1,4 +1,5 @@
-import { APIResponseProps, PromiseOrValue } from '../core/client'
+import { APIResponseProps, FinalRequestOptions } from '../core/client'
+import type { ErnieBot } from '../erniebot'
 
 export interface APIInfo {
   resourceId: string
@@ -10,9 +11,15 @@ export interface APIInfo {
   }
 }
 
-export interface EBBackend {
+export interface EBBackendObject {
   baseURL: string
   apiType: string
   resources: Record<string, APIInfo>
-  parseResponse: (props: APIResponseProps) => PromiseOrValue<any>
+  authHeaders?: (options: FinalRequestOptions<any>) => Record<string, string>
+  prepareRequest?: (request: RequestInit) => Promise<void>
+  parseResponse?: (props: APIResponseProps) => Promise<any>
 }
+
+export type EBBackendFunction = (erniebot: ErnieBot) => EBBackendObject
+
+export type EBBackend = EBBackendFunction | EBBackendObject

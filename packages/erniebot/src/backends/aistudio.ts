@@ -1,12 +1,16 @@
-import { APIResponseProps, APIError, Stream } from '../core'
-import { debug } from '../cross-platform'
+import { readEnv } from '../cross-platform'
+import { EBError } from '../core'
+import { ErnieBot } from '../erniebot'
+import { EBBackendFunction, EBBackendObject } from './backend'
 
-import { EBBackend } from './backend'
+export class AIStudioBackend implements EBBackendObject {
+  constructor(private api: ErnieBot) {}
 
-export const AIStudioBackend: EBBackend = {
-  apiType: 'aistudio',
-  baseURL: 'https://aistudio.baidu.com/llm/lmapi/v1',
-  resources: {
+  apiType = 'aistudio'
+
+  baseURL = 'https://aistudio.baidu.com/llm/lmapi/v1'
+
+  resources = {
     '/chat/completions': {
       resourceId: 'chat',
       models: {
@@ -29,30 +33,19 @@ export const AIStudioBackend: EBBackend = {
         },
       },
     },
-  },
-  async parseResponse({ response, options, controller }: APIResponseProps) {
-    const headers = response.headers
-    if (options.stream) {
-      debug('response', response.status, response.url, headers, response.body)
+  }
 
-      return Stream.fromSSEResponse(response, controller) as any
+  authHeaders() {
+    const { token = readEnv('AISTUDIO_ACCESS_TOKEN') } = this.api.config
+
+    if (token == null) {
+      throw new EBError(
+        "The EB_ACCESS_TOKEN environment variable is missing or empty; either provide it, or instantiate the ErnieBot client with an token option, like new ErnieBot({ token: 'My API Access Token' }).",
+      )
     }
 
-    const contentType = headers.get('content-type')
-    if (contentType?.includes('application/json')) {
-      const json = await responseon()
-
-      debug('response', response.status, response.url, headers, json)
-
-      if (json.errorCode === 0) return json.result
-
-      const message = json.errorMsg
-      return Promise.reject(APIError.generate(json.errorCode, json, message, headers))
-    }
-
-    // TODO handle blob, arraybuffer, other content types, etc.
-    const text = await response.text()
-    debug('response', response.status, response.url, headers, text)
-    return text
-  },
+    return { authorization: `token ${token}` }
+  }
 }
+
+export const aiStudioBackend: EBBackendFunction = (api) => new AIStudioBackend(api)

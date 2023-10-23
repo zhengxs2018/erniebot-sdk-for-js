@@ -239,7 +239,7 @@ export class APIClient {
 
     const contentType = headers.get('content-type')
     if (contentType?.includes('application/json')) {
-      const json = await responseon()
+      const json = await response.json()
 
       debug('response', response.status, response.url, headers, json)
 

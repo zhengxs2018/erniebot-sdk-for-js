@@ -1,27 +1,19 @@
-import { AIStudioBackend, EBBackend } from './backends'
+import { aiStudioBackend, EBBackend, EBBackendObject } from './backends'
 import {
   APIClient,
   APIClientOptions,
   APIResponseProps,
   FinalRequestOptions,
-  EBError,
   UnsupportedAPITypeError,
   InvalidArgumentError,
 } from './core'
-import { mergeHTTPSearchParams, readEnv } from './cross-platform'
+import { mergeHTTPSearchParams, HTTPHeaders, readEnv } from './cross-platform'
 import { Chat, Embeddings } from './resources'
 import { VERSION } from './version'
 
 export type APIType = (string & NonNullable<unknown>) | 'aistudio'
 
-export interface EBOptions extends APIClientOptions {
-  /**
-   * Defaults to process.env['EB_API_TYPE'].
-   *
-   * @defaultValue aistudio
-   */
-  apiType?: APIType
-
+export interface EBConfig {
   /**
    * Defaults to process.env['EB_ACCESS_TOKEN'].
    */
@@ -36,6 +28,15 @@ export interface EBOptions extends APIClientOptions {
    * Defaults to process.env['EB_SK'].
    */
   sk?: string | null
+}
+
+export interface EBOptions extends APIClientOptions, EBConfig {
+  /**
+   * Defaults to process.env['EB_API_TYPE'].
+   *
+   * @defaultValue aistudio
+   */
+  apiType?: APIType
 
   /**
    * By default, client-side use of this library is not allowed, as it risks exposing your secret API credentials to attackers.
@@ -48,31 +49,35 @@ export class ErnieBot extends APIClient {
   static version = VERSION
 
   static backends: Record<string, EBBackend> = {
-    aistudio: AIStudioBackend,
+    aistudio: aiStudioBackend,
   }
 
   private _apiType!: APIType
 
-  private _token!: string
+  private _backend!: EBBackendObject
 
-  private _backend!: EBBackend
+  config: EBConfig
 
   /**
    * API Client for interfacing with the ERNIE Bot API.
    */
-  constructor(public options: EBOptions) {
-    super(options)
+  constructor(public options?: EBOptions) {
+    const {
+      apiType = 'aistudio',
+      token = readEnv('EB_ACCESS_TOKEN'),
+      ak = readEnv('EB_AK'),
+      sk = readEnv('EB_SK'),
+      ...rest
+    } = options || {}
 
-    const { apiType = 'aistudio', token = readEnv('EB_ACCESS_TOKEN') } = options
-
-    if (token == null) {
-      throw new EBError(
-        "The EB_ACCESS_TOKEN environment variable is missing or empty; either provide it, or instantiate the ErnieBot client with an token option, like new ErnieBot({ token: 'My API Access Token' }).",
-      )
-    }
+    super(rest)
 
     this.apiType = apiType
-    this._token = token
+    this.config = {
+      token,
+      ak,
+      sk,
+    }
   }
 
   get apiType() {
@@ -80,7 +85,7 @@ export class ErnieBot extends APIClient {
   }
 
   set apiType(apiType: APIType) {
-    this._backend = ErnieBot.makeBackend(apiType)
+    this._backend = this.makeBackend(apiType)
     this._apiType = apiType
   }
 
@@ -92,17 +97,37 @@ export class ErnieBot extends APIClient {
     return `ErnieBot/JS-SDK ${VERSION}`
   }
 
-  protected override authHeaders() {
-    return { authorization: `token ${this._token}` }
+  protected override authHeaders(options: FinalRequestOptions<any>): HTTPHeaders {
+    const backend = this._backend
+
+    if (typeof backend.authHeaders === 'function') {
+      return backend.authHeaders(options)
+    }
+
+    return super.authHeaders(options)
   }
 
-  protected override parseResponse(props: APIResponseProps) {
-    return this._backend.parseResponse(props)
+  protected override async prepareRequest(request: RequestInit): Promise<void> {
+    const backend = this._backend
+
+    if (typeof backend.prepareRequest === 'function') {
+      await backend.prepareRequest(request)
+    }
+  }
+
+  protected override parseResponse<T>(props: APIResponseProps): Promise<T> {
+    const backend = this._backend
+    if (typeof backend.parseResponse === 'function') {
+      return backend.parseResponse(props)
+    }
+
+    return super.parseResponse(props)
   }
 
   private getRequestPath(path: string, model: string): string {
     const backend = this._backend
     const apiInfo = backend.resources[path]
+
     if (!apiInfo) return `${this.baseURL}${path}`
 
     if (model in apiInfo['models']) {
@@ -125,13 +150,11 @@ export class ErnieBot extends APIClient {
     return url.toString()
   }
 
-  static makeBackend(apiType: APIType) {
+  makeBackend(apiType: APIType): EBBackendObject {
     const backend = ErnieBot.backends[apiType]
 
-    if (!backend) {
-      throw new UnsupportedAPITypeError(`${apiType} cannot be recognized as an API type.`)
-    }
+    if (backend) return typeof backend === 'function' ? backend(this) : backend
 
-    return backend
+    throw new UnsupportedAPITypeError(`${apiType} cannot be recognized as an API type.`)
   }
 }
