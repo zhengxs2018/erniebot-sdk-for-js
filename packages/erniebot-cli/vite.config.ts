@@ -22,7 +22,7 @@ export default defineConfig({
     'process.env.PKG_VERSION': JSON.stringify(pkg.version),
   },
   build: {
-    sourcemap: true,
+    sourcemap: false,
     copyPublicDir: false,
     reportCompressedSize: false,
     lib: {
@@ -36,13 +36,6 @@ export default defineConfig({
           exports: 'named',
           entryFileNames: '[name].mjs',
           chunkFileNames: '[name].mjs',
-        },
-        {
-          format: 'cjs',
-          dir: 'dist',
-          exports: 'named',
-          entryFileNames: '[name].cjs',
-          chunkFileNames: '[name].cjs',
         },
       ],
     },

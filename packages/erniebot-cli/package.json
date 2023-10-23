@@ -1,31 +1,14 @@
 {
   "name": "@zhengxs/erniebot-cli",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "keywords": [
     "erniebot",
     "erniebot-cli"
   ],
   "description": "非官方 JS-SDK，支持命令行调用文心大模型",
-  "type": "commonjs",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist-types/index.d.ts"
-    },
-    "./package.json": "./package.json"
-  },
+  "type": "module",
+  "main": "./dist/index.mjs",
   "types": "./dist-types/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist-types/index.d.ts",
-        "./dist-types/*"
-      ]
-    }
-  },
   "bin": {
     "erniebot": "./bin/erniebot.mjs"
   },
