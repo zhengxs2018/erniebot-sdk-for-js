@@ -1,4 +1,6 @@
-import { APIPromise, APIRequestOptions } from '../core'
+import { APIPromise } from '../client'
+import { APIRequestOptions } from '../interfaces'
+
 import { APIResource } from './resource'
 
 export class Embeddings extends APIResource {
@@ -10,7 +12,7 @@ export class Embeddings extends APIResource {
 export interface CreateEmbeddingResponse {
   data: Array<Embedding>
 
-  model: string
+  model: (string & NonNullable<unknown>) | 'ernie-text-embedding'
 
   object: string
 

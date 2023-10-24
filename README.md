@@ -19,13 +19,41 @@ $ pnpm add @zhengxs/erniebot
 
 ## 使用
 
-目前仅支持 [AI Studio](https://aistudio.baidu.com) 后端。
+### AI Studio
+
+默认是 [AI Studio](https://aistudio.baidu.com) 后端。
 
 ```ts
-import { ErnieBot } from '@zhengxs/erniebot'
+import ErnieBot from '@zhengxs/erniebot'
 
 const erniebot = new ErnieBot({
+  apiType: 'aistudio',
   token: 'My API Access Token', // defaults to process.env["EB_ACCESS_TOKEN"]
+})
+
+async function main() {
+  const chatCompletion = await erniebot.chat.completions.create({
+    model: 'ernie-bot',
+    messages: [{ role: 'user', content: 'Say this is a test' }],
+  })
+
+  console.log(chatCompletion.result)
+}
+
+main()
+```
+
+### 文心千帆
+
+可以切换为 [文心千帆](https://cloud.baidu.com/product/wenxinworkshop) 后端。
+
+```ts
+import ErnieBot from '@zhengxs/erniebot'
+
+const erniebot = new ErnieBot({
+  apiType: 'qianfan',
+  ak: 'My APP Access Token', // defaults to process.env["EB_AK"]
+  sk: 'My APP Secret Token', // defaults to process.env["EB_SK"]
 })
 
 async function main() {
@@ -49,7 +77,7 @@ main()
 
 - 平台支持
   - [x] [AI Studio](https://aistudio.baidu.com/)
-  - [ ] [文心千帆](https://cloud.baidu.com/product/wenxinworkshop)
+  - [x] [文心千帆](https://cloud.baidu.com/product/wenxinworkshop)
   - [ ] [文心一言](https://yiyan.baidu.com)
 - 功能支持
   - [x] ChatCompletion

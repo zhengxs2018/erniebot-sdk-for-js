@@ -5,24 +5,21 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
-    "watch": "pnpm -r watch",
     "build": "pnpm -r build",
+    "clean": "pnpm -r run clean",
+    "watch": "pnpm -r run watch",
     "erniebot": "pnpm -F @zhengxs/erniebot-cli erniebot",
-    "demo": "pnpm -F samples demo",
+    "sample": "pnpm -F samples dev",
     "lint": "eslint . --ext .ts,.cjs",
     "lint:fix": "eslint . --ext .ts,.cjs --fix --fix-type [problem,suggestion]",
-    "fmt": "prettier --write \"**/*.{ts,json,,md}\" --log-level warn"
+    "fmt": "prettier --write \"**/*.{cjs,ts,json,,md}\" --log-level warn"
   },
   "packageManager": "pnpm@7.0.0",
-  "dependencies": {
-    "@zhengxs/erniebot": "workspace:*"
-  },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.36.4",
     "@types/node": "^20.6.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
-    "dotenv": "^16.3.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-define-config": "^1.24.1",
@@ -31,7 +28,6 @@
     "eslint-plugin-tsdoc": "^0.2.17",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.1",
-    "jiti": "^1.20.0",
     "mkdirp": "^3.0.1",
     "prettier": "^3.0.3",
     "typedoc": "^0.25.2",

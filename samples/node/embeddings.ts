@@ -1,8 +1,6 @@
-import { ErnieBot } from '@zhengxs/erniebot'
+import ErnieBot from '@zhengxs/erniebot'
 
-const erniebot = new ErnieBot({
-  apiType: 'aistudio',
-})
+const erniebot = new ErnieBot()
 
 async function main() {
   const response = await erniebot.embeddings.create({
