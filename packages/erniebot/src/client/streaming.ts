@@ -1,4 +1,4 @@
-import { EBError, APIError } from './error'
+import { EBError, APIError } from '../error'
 
 type Bytes = string | ArrayBuffer | Uint8Array | Buffer | null | undefined
 
@@ -8,7 +8,7 @@ type ServerSentEvent = {
   raw: string[]
 }
 
-export class Stream<Item> implements AsyncIterable<Item> {
+export class APIStream<Item> implements AsyncIterable<Item> {
   controller: AbortController
 
   constructor(
@@ -88,7 +88,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
       }
     }
 
-    return new Stream(iterator, controller)
+    return new APIStream(iterator, controller)
   }
 
   // Generates a Stream from a newline-separated ReadableStream where each item
@@ -133,14 +133,14 @@ export class Stream<Item> implements AsyncIterable<Item> {
       }
     }
 
-    return new Stream(iterator, controller)
+    return new APIStream(iterator, controller)
   }
 
   [Symbol.asyncIterator](): AsyncIterator<Item> {
     return this.iterator()
   }
 
-  tee(): [Stream<Item>, Stream<Item>] {
+  tee(): [APIStream<Item>, APIStream<Item>] {
     const left: Array<Promise<IteratorResult<Item>>> = []
     const right: Array<Promise<IteratorResult<Item>>> = []
     const iterator = this.iterator()
@@ -158,7 +158,10 @@ export class Stream<Item> implements AsyncIterable<Item> {
       }
     }
 
-    return [new Stream(() => teeIterator(left), this.controller), new Stream(() => teeIterator(right), this.controller)]
+    return [
+      new APIStream(() => teeIterator(left), this.controller),
+      new APIStream(() => teeIterator(right), this.controller),
+    ]
   }
 
   // Converts this stream to a newline-separated ReadableStream of JSON Stringified values in the stream

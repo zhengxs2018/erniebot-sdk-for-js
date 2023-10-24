@@ -22,7 +22,7 @@ $ pnpm add @zhengxs/erniebot
 目前仅支持 [AI Studio](https://aistudio.baidu.com) 后端。
 
 ```ts
-import { ErnieBot } from '@zhengxs/erniebot'
+import ErnieBot from '@zhengxs/erniebot'
 
 const erniebot = new ErnieBot({
   token: 'My API Access Token', // defaults to process.env["EB_ACCESS_TOKEN"]

@@ -1,3 +1,3 @@
 export * from './client'
-export * from './error'
+export * from './promise'
 export * from './streaming'

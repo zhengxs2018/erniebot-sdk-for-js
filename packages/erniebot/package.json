@@ -8,14 +8,6 @@
   "type": "commonjs",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist-types/index.d.ts"
-    },
-    "./package.json": "./package.json"
-  },
   "types": "./dist-types/index.d.ts",
   "typesVersions": {
     "*": {
@@ -24,6 +16,14 @@
         "./dist-types/*"
       ]
     }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist-types/index.d.ts"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",

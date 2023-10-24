@@ -1,13 +1,11 @@
 {
 	"folders": [
 		{
-			"path": "samples"
-		},
-		{
-			"path": "samples-deno"
-		},
-		{
 			"path": "packages/erniebot"
+		},
+		{
+      "name": "samples",
+			"path": "samples/node"
 		},
 		{
 			"path": "."

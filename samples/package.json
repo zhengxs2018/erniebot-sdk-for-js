@@ -1,9 +1,0 @@
-{
-  "name": "samples",
-  "private": true,
-  "version": "0.1.0",
-  "type": "commonjs",
-  "scripts": {
-    "demo": "node --no-warnings -r ./setup.cjs"
-  }
-}

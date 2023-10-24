@@ -1,12 +1,12 @@
 export { Chat } from './chat'
-export type {
-  ChatCompletion,
-  ChatCompletionChunk,
-  ChatCompletionMessage,
-  ChatCompletionMessageParam,
-  ChatCompletionRole,
-  ChatCompletionCreateParams,
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionCreateParamsStreaming,
+export {
+  type ChatCompletion,
+  type ChatCompletionChunk,
+  type ChatCompletionMessage,
+  type ChatCompletionMessageParam,
+  type ChatCompletionRole,
+  type ChatCompletionCreateParams,
+  type ChatCompletionCreateParamsNonStreaming,
+  type ChatCompletionCreateParamsStreaming,
   Completions,
 } from './completions'

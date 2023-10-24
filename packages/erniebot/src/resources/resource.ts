@@ -1,4 +1,4 @@
-import { APIClient } from '../core'
+import { APIClient } from '../client'
 
 export class APIResource {
   protected get: APIClient['get']

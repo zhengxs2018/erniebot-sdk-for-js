@@ -4,13 +4,6 @@ import dts from 'vite-plugin-dts'
 
 import pkg from './package.json'
 
-/**
- * vite config
- * @see https://vitejs.dev/
- *
- * vitest config
- * @see https://vitest.dev/
- */
 export default defineConfig({
   plugins: [
     externalizeDeps(),
@@ -22,7 +15,7 @@ export default defineConfig({
     'process.env.PKG_VERSION': JSON.stringify(pkg.version),
   },
   build: {
-    sourcemap: true,
+    sourcemap: false,
     copyPublicDir: false,
     reportCompressedSize: false,
     lib: {

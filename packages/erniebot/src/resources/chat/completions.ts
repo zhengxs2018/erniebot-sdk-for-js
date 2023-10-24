@@ -1,4 +1,6 @@
-import { APIPromise, APIRequestOptions, Stream } from '../../core'
+import { APIRequestOptions } from '../../interfaces'
+import { APIPromise, APIStream } from '../../client'
+
 import { APIResource } from '../resource'
 import { CompletionUsage } from '../completions'
 
@@ -10,18 +12,18 @@ export class Completions extends APIResource {
   create(
     body: ChatCompletionCreateParamsStreaming,
     options?: APIRequestOptions,
-  ): APIPromise<Stream<ChatCompletionChunk>>
+  ): APIPromise<APIStream<ChatCompletionChunk>>
   create(
     body: ChatCompletionCreateParamsBase,
     options?: APIRequestOptions,
-  ): APIPromise<Stream<ChatCompletionChunk> | ChatCompletion>
+  ): APIPromise<APIStream<ChatCompletionChunk> | ChatCompletion>
   create(
     body: ChatCompletionCreateParams,
     options?: APIRequestOptions,
-  ): APIPromise<ChatCompletion> | APIPromise<Stream<ChatCompletionChunk>> {
+  ): APIPromise<ChatCompletion> | APIPromise<APIStream<ChatCompletionChunk>> {
     return this.post('/chat/completions', { body, ...options, stream: body.stream ?? false }) as
       | APIPromise<ChatCompletion>
-      | APIPromise<Stream<ChatCompletionChunk>>
+      | APIPromise<APIStream<ChatCompletionChunk>>
   }
 }
 
@@ -219,7 +221,7 @@ export type ChatCompletionCreateParams = ChatCompletionCreateParamsNonStreaming 
 
 export interface ChatCompletionCreateParamsBase {
   messages: Array<ChatCompletionMessageParam>
-  model: string
+  model: (string & NonNullable<unknown>) | 'ernie-bot' | 'ernie-bot-turbo' | 'ernie-bot-4'
   frequency_penalty?: number | null
   function_call?: 'none' | 'auto' | ChatCompletionCreateParams.FunctionCallOption
   functions?: Array<ChatCompletionCreateParams.Function>
