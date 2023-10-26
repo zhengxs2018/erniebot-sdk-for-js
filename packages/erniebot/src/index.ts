@@ -193,6 +193,7 @@ export class ErnieBot extends Core.APIClient {
 
   static ErnieBot = this
 
+  static version = VERSION
   static EBError = Errors.EBError
   static InvalidArgumentError = Errors.InvalidArgumentError
   static UnsupportedAPITypeError = Errors.UnsupportedAPITypeError

@@ -104,6 +104,8 @@ class ErnieBot extends Core.APIClient {
   token?: string
   // (undocumented)
   static UnsupportedAPITypeError: typeof Errors.UnsupportedAPITypeError
+  // (undocumented)
+  static version: string
 }
 
 // @public (undocumented)

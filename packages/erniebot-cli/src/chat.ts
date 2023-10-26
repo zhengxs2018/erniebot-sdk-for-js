@@ -3,7 +3,7 @@ import ora from 'ora'
 import colors from 'ansi-colors'
 import enquirer from 'enquirer'
 
-import { ErnieBot, EBOptions, ChatCompletionCreateParamsNonStreaming } from '@zhengxs/erniebot'
+import ERNIEBot, { EBOptions } from '@zhengxs/erniebot'
 
 import { VERSION } from './version'
 
@@ -13,7 +13,7 @@ const banner = ` _____ ____  _   _ ___ _____   ____        _
 | |___|  _ <| |\\  || || |___  | |_) | (_) | |_
 |_____|_| \\_\\_| \\_|___|_____| |____/ \\___/ \\__|
 
-JS-SDK v${ErnieBot.version} | CLI v${VERSION}
+JS-SDK v${ERNIEBot.version} | CLI v${VERSION}
 =====================
 
 你好，我是文心一言 ERNIE Bot。
@@ -55,9 +55,9 @@ cmd.action(async (options: EBOptions & { model?: string }) => {
 
   const { model = 'ernie-bot', ...rest } = options
 
-  const api = new ErnieBot(rest)
+  const api = new ERNIEBot(rest)
 
-  const context: ChatCompletionCreateParamsNonStreaming = {
+  const context: ERNIEBot.ChatCompletionCreateParams = {
     model: model,
     messages: [],
   }
