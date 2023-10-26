@@ -6,13 +6,13 @@ import { VERSION } from './version'
 import { buildBackend, APIType } from './backends'
 import {
   APIRequestInit,
-  APIBackend,
   APIHeaders,
   APIResponseProps,
   APIRequestOptions,
   APIBody,
   HTTPSearchParams,
 } from './interfaces'
+import { APIBackend } from './backend'
 import { inBrowser, readEnv, debuglog } from './shared'
 
 const debug = debuglog('ernie')
@@ -53,7 +53,7 @@ export interface EBOptions extends Core.APIClientOptions {
   dangerouslyAllowBrowser?: boolean
 }
 
-export class ErnieBot extends Core.APIClient {
+export class ERNIEBot extends Core.APIClient {
   #apiType!: APIType
 
   #backend!: APIBackend
@@ -81,7 +81,7 @@ export class ErnieBot extends Core.APIClient {
 
     if (!dangerouslyAllowBrowser && inBrowser) {
       throw new Errors.EBError(
-        "It looks like you're running in a browser-like environment.\n\nThis is disabled by default, as it risks exposing your secret API credentials to attackers.\nIf you understand the risks and have appropriate mitigations in place,\nyou can set the `dangerouslyAllowBrowser` option to `true`, e.g.,\n\nnew ErnieBot({ apiKey, dangerouslyAllowBrowser: true });",
+        "It looks like you're running in a browser-like environment.\n\nThis is disabled by default, as it risks exposing your secret API credentials to attackers.\nIf you understand the risks and have appropriate mitigations in place,\nyou can set the `dangerouslyAllowBrowser` option to `true`, e.g.,\n\nnew ERNIEBot({ apiKey, dangerouslyAllowBrowser: true });",
       )
     }
 
@@ -127,25 +127,20 @@ export class ErnieBot extends Core.APIClient {
     return `ERNIEBot JS-SDK/${VERSION} Backend/${this.#backend.apiType}`
   }
 
-  getResourcePath(path: string, model: string): string | undefined {
-    const backend = this.#backend
-    if (typeof backend.getResourcePath === 'function') {
-      return backend.getResourcePath(path, model)
-    }
-
-    const resource = backend.resources[path]
-    if (resource) {
-      const { resourceId, models } = resource
-      const { moduleId } = models[model]
-
-      if (moduleId) return `${backend.baseURL}/${resourceId}/${moduleId}`
-
-      throw new InvalidArgumentError(`${model} is not a supported model.`)
-    }
-  }
-
   protected async defaultQuery(): Promise<HTTPSearchParams> {
     return this.#backend.defaultQuery?.() || {}
+  }
+
+  protected override authHeaders(options: APIRequestOptions): APIHeaders {
+    return this.#backend.authHeaders(options)
+  }
+
+  protected override prepareRequest(req: APIRequestInit, init: { url: string; options: APIRequestOptions }) {
+    return this.#backend.prepareRequest?.(req, init)
+  }
+
+  protected override parseResponse<T>(props: APIResponseProps): Promise<T> {
+    return this.#backend.parseResponse(props)
   }
 
   protected override async buildURL(options: APIRequestOptions): Promise<string> {
@@ -153,7 +148,7 @@ export class ErnieBot extends Core.APIClient {
     const model = (body as APIBody)?.model
 
     if (model) {
-      const resourcePath = this.getResourcePath(path, model)
+      const resourcePath = this.#backend.overrideResourcePath(path, model)
       if (resourcePath) {
         const defaultQuery = await this.defaultQuery()
         const searchParams = Core.mergeHTTPSearchParams(options.query, defaultQuery)
@@ -168,52 +163,41 @@ export class ErnieBot extends Core.APIClient {
     return super.buildURL(options)
   }
 
-  protected override authHeaders(options: APIRequestOptions): APIHeaders {
-    const backend = this.#backend
-
-    if (typeof backend.authHeaders === 'function') {
-      return backend.authHeaders(options)
-    }
-
-    return super.authHeaders(options)
-  }
-
-  protected override prepareRequest(req: APIRequestInit, init: { url: string; options: APIRequestOptions }) {
-    return this.#backend.prepareRequest?.(req, init)
-  }
-
-  protected override parseResponse<T>(props: APIResponseProps): Promise<T> {
-    const backend = this.#backend
-    if (typeof backend.parseResponse === 'function') {
-      return backend.parseResponse(props)
-    }
-
-    return super.parseResponse(props)
-  }
-
-  static ErnieBot = this
+  static ERNIEBot = this
 
   static version = VERSION
   static EBError = Errors.EBError
-  static InvalidArgumentError = Errors.InvalidArgumentError
-  static UnsupportedAPITypeError = Errors.UnsupportedAPITypeError
   static APIError = Errors.APIError
   static APIConnectionError = Errors.APIConnectionError
   static APIConnectionTimeoutError = Errors.APIConnectionTimeoutError
   static APIUserAbortError = Errors.APIUserAbortError
+  static NotFoundError = Errors.NotFoundError
+  static ConflictError = Errors.ConflictError
+  static RateLimitError = Errors.RateLimitError
+  static BadRequestError = Errors.BadRequestError
+  static AuthenticationError = Errors.AuthenticationError
+  static InternalServerError = Errors.InternalServerError
+  static PermissionDeniedError = Errors.PermissionDeniedError
+  static UnprocessableEntityError = Errors.UnprocessableEntityError
 }
 
 export const {
   EBError,
-  InvalidArgumentError,
-  UnsupportedAPITypeError,
   APIError,
   APIConnectionError,
   APIConnectionTimeoutError,
   APIUserAbortError,
+  NotFoundError,
+  ConflictError,
+  RateLimitError,
+  BadRequestError,
+  AuthenticationError,
+  InternalServerError,
+  PermissionDeniedError,
+  UnprocessableEntityError,
 } = Errors
 
-export namespace ErnieBot {
+export namespace ERNIEBot {
   export type Chat = API.Chat
   export type ChatCompletion = API.ChatCompletion
   export type ChatCompletionChunk = API.ChatCompletionChunk
@@ -230,4 +214,4 @@ export namespace ErnieBot {
   export type EmbeddingCreateParams = API.EmbeddingCreateParams
 }
 
-export default ErnieBot
+export default ERNIEBot

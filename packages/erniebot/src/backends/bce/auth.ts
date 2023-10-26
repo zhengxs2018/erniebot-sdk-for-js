@@ -152,7 +152,6 @@ export class AuthSignature {
   }
 }
 
-// TODO 支持 Token 缓存
 export class TokenManager {
   #promise?: Promise<string>
 

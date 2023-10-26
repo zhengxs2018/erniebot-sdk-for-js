@@ -1,7 +1,7 @@
 import { APIPromise } from '../client'
 import { APIRequestOptions } from '../interfaces'
 
-import { APIResource } from './resource'
+import { APIResource } from '../resource'
 
 export class Embeddings extends APIResource {
   create(body: EmbeddingCreateParams, options?: APIRequestOptions): APIPromise<CreateEmbeddingResponse> {

@@ -5,11 +5,10 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
-    "build": "pnpm -r build",
+    "build": "pnpm -r build && pnpm fmt",
     "clean": "pnpm -r run clean",
     "watch": "pnpm -r run watch",
     "erniebot": "pnpm -F @zhengxs/erniebot-cli erniebot",
-    "sample": "pnpm -F samples dev",
     "lint": "eslint . --ext .ts,.cjs",
     "lint:fix": "eslint . --ext .ts,.cjs --fix --fix-type [problem,suggestion]",
     "fmt": "prettier --write \"**/*.{cjs,ts,json,,md}\" --log-level warn"

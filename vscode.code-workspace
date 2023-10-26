@@ -1,11 +1,11 @@
 {
 	"folders": [
 		{
-			"path": "packages/erniebot"
-		},
-		{
       "name": "samples",
 			"path": "samples/node"
+		},
+		{
+			"path": "packages/erniebot"
 		},
 		{
 			"path": "."

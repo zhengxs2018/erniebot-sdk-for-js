@@ -1,7 +1,7 @@
 import { APIRequestOptions } from '../../interfaces'
 import { APIPromise, APIStream } from '../../client'
 
-import { APIResource } from '../resource'
+import { APIResource } from '../../resource'
 import { CompletionUsage } from '../completions'
 
 export class Completions extends APIResource {

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "node --no-warnings -r ./setup.cjs"
+    "dev": "node --no-warnings -r ./setup.cjs --watch"
   },
   "dependencies": {
     "@zhengxs/erniebot": "workspace:*"

@@ -1,3 +1,5 @@
+import { castToError } from './shared'
+
 export class EBError extends Error {}
 
 export class InvalidArgumentError extends EBError {}
@@ -57,7 +59,43 @@ export class APIError extends EBError {
     message: string | undefined,
     headers: Headers | undefined,
   ) {
+    if (!status) {
+      return new APIConnectionError({ cause: castToError(errorResponse) })
+    }
+
     const error = (errorResponse as Record<string, any>)?.['error']
+
+    if (status === 400) {
+      return new BadRequestError(status, error, message, headers)
+    }
+
+    if (status === 401) {
+      return new AuthenticationError(status, error, message, headers)
+    }
+
+    if (status === 403) {
+      return new PermissionDeniedError(status, error, message, headers)
+    }
+
+    if (status === 404) {
+      return new NotFoundError(status, error, message, headers)
+    }
+
+    if (status === 409) {
+      return new ConflictError(status, error, message, headers)
+    }
+
+    if (status === 422) {
+      return new UnprocessableEntityError(status, error, message, headers)
+    }
+
+    if (status === 429) {
+      return new RateLimitError(status, error, message, headers)
+    }
+
+    if (status >= 500) {
+      return new InternalServerError(status, error, message, headers)
+    }
 
     return new APIError(status, error, message, headers)
   }
@@ -87,3 +125,33 @@ export class APIConnectionTimeoutError extends APIConnectionError {
     super({ message: message ?? 'Request timed out.' })
   }
 }
+
+export class BadRequestError extends APIError {
+  override readonly status = 400
+}
+
+export class AuthenticationError extends APIError {
+  override readonly status = 401
+}
+
+export class PermissionDeniedError extends APIError {
+  override readonly status = 403
+}
+
+export class NotFoundError extends APIError {
+  override readonly status = 404
+}
+
+export class ConflictError extends APIError {
+  override readonly status = 409
+}
+
+export class UnprocessableEntityError extends APIError {
+  override readonly status = 422
+}
+
+export class RateLimitError extends APIError {
+  override readonly status = 429
+}
+
+export class InternalServerError extends APIError {}

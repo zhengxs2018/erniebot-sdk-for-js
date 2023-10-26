@@ -18,6 +18,15 @@ export const APIError: typeof Errors.APIError
 export const APIUserAbortError: typeof Errors.APIUserAbortError
 
 // @public (undocumented)
+export const AuthenticationError: typeof Errors.AuthenticationError
+
+// @public (undocumented)
+export const BadRequestError: typeof Errors.BadRequestError
+
+// @public (undocumented)
+export const ConflictError: typeof Errors.ConflictError
+
+// @public (undocumented)
 export const EBError: typeof Errors.EBError
 
 // Warning: (ae-forgotten-export) The symbol "Core" needs to be exported by the entry point index.d.ts
@@ -33,7 +42,7 @@ export interface EBOptions extends Core.APIClientOptions {
 }
 
 // @public (undocumented)
-class ErnieBot extends Core.APIClient {
+class ERNIEBot extends Core.APIClient {
   constructor(options?: EBOptions | undefined)
   // (undocumented)
   ak?: string
@@ -48,6 +57,9 @@ class ErnieBot extends Core.APIClient {
   set apiType(apiType: APIType)
   // (undocumented)
   static APIUserAbortError: typeof Errors.APIUserAbortError
+  // (undocumented)
+  static AuthenticationError: typeof Errors.AuthenticationError
+  // Warning: (ae-forgotten-export) The symbol "APIRequestOptions" needs to be exported by the entry point index.d.ts
   // Warning: (ae-forgotten-export) The symbol "APIHeaders" needs to be exported by the entry point index.d.ts
   //
   // (undocumented)
@@ -57,14 +69,16 @@ class ErnieBot extends Core.APIClient {
   // (undocumented)
   get backend(): APIBackend
   set backend(backend: APIBackend)
-  // Warning: (ae-forgotten-export) The symbol "APIRequestOptions" needs to be exported by the entry point index.d.ts
-  //
+  // (undocumented)
+  static BadRequestError: typeof Errors.BadRequestError
   // (undocumented)
   protected buildURL(options: APIRequestOptions): Promise<string>
   // Warning: (ae-forgotten-export) The symbol "API" needs to be exported by the entry point index.d.ts
   //
   // (undocumented)
   chat: API.Chat
+  // (undocumented)
+  static ConflictError: typeof Errors.ConflictError
   // Warning: (ae-forgotten-export) The symbol "HTTPSearchParams" needs to be exported by the entry point index.d.ts
   //
   // (undocumented)
@@ -74,19 +88,21 @@ class ErnieBot extends Core.APIClient {
   // (undocumented)
   embeddings: API.Embeddings
   // (undocumented)
-  static ErnieBot: typeof ErnieBot
-  // (undocumented)
-  getResourcePath(path: string, model: string): string | undefined
+  static ERNIEBot: typeof ERNIEBot
   // (undocumented)
   protected getUserAgent(): string
   // (undocumented)
-  static InvalidArgumentError: typeof Errors.InvalidArgumentError
+  static InternalServerError: typeof Errors.InternalServerError
+  // (undocumented)
+  static NotFoundError: typeof Errors.NotFoundError
   // (undocumented)
   options?: EBOptions | undefined
   // Warning: (ae-forgotten-export) The symbol "APIResponseProps" needs to be exported by the entry point index.d.ts
   //
   // (undocumented)
   protected parseResponse<T>(props: APIResponseProps): Promise<T>
+  // (undocumented)
+  static PermissionDeniedError: typeof Errors.PermissionDeniedError
   // Warning: (ae-forgotten-export) The symbol "APIRequestInit" needs to be exported by the entry point index.d.ts
   // Warning: (ae-forgotten-export) The symbol "MaybePromise" needs to be exported by the entry point index.d.ts
   //
@@ -97,19 +113,21 @@ class ErnieBot extends Core.APIClient {
       url: string
       options: APIRequestOptions
     },
-  ): MaybePromise<void> | undefined
+  ): MaybePromise<void>
+  // (undocumented)
+  static RateLimitError: typeof Errors.RateLimitError
   // (undocumented)
   sk?: string
   // (undocumented)
   token?: string
   // (undocumented)
-  static UnsupportedAPITypeError: typeof Errors.UnsupportedAPITypeError
+  static UnprocessableEntityError: typeof Errors.UnprocessableEntityError
   // (undocumented)
   static version: string
 }
 
 // @public (undocumented)
-namespace ErnieBot {
+namespace ERNIEBot {
   // (undocumented)
   type Chat = API.Chat
   // (undocumented)
@@ -137,14 +155,23 @@ namespace ErnieBot {
   // (undocumented)
   type Embeddings = API.Embeddings
 }
-export { ErnieBot }
-export default ErnieBot
+export { ERNIEBot }
+export default ERNIEBot
 
 // @public (undocumented)
-export const InvalidArgumentError: typeof Errors.InvalidArgumentError
+export const InternalServerError: typeof Errors.InternalServerError
 
 // @public (undocumented)
-export const UnsupportedAPITypeError: typeof Errors.UnsupportedAPITypeError
+export const NotFoundError: typeof Errors.NotFoundError
+
+// @public (undocumented)
+export const PermissionDeniedError: typeof Errors.PermissionDeniedError
+
+// @public (undocumented)
+export const RateLimitError: typeof Errors.RateLimitError
+
+// @public (undocumented)
+export const UnprocessableEntityError: typeof Errors.UnprocessableEntityError
 
 // (No @packageDocumentation comment for this package)
 ```

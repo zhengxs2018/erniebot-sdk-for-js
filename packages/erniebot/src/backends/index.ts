@@ -1,5 +1,5 @@
 import { UnsupportedAPITypeError } from '../error'
-import { APIBackend } from '../interfaces'
+import { APIBackend } from '../backend'
 
 import { aiStudio } from './aistudio'
 import { qianFan } from './bce'

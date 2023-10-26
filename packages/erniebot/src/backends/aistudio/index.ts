@@ -1,17 +1,13 @@
-import ErnieBot from '../../index'
-import { APIStream } from '../../client'
-import { EBError, APIError, InvalidArgumentError } from '../../error'
-import { APIResponseProps, APIBackend } from '../../interfaces'
-import { readEnv, debuglog } from '../../shared'
+import { APIBackend } from '../../backend'
+import { EBError } from '../../error'
+import { readEnv } from '../../shared'
 
-const debug = debuglog('erniebot:backend:aistudio')
-
-class AIStudioBackend implements APIBackend {
+class AIStudioBackend extends APIBackend {
   apiType = 'aistudio' as const
 
   baseURL = 'https://aistudio.baidu.com/llm/lmapi/v1'
 
-  resources: APIBackend['resources'] = {
+  resources = {
     '/chat/completions': {
       resourceId: 'chat',
       models: {
@@ -28,13 +24,7 @@ class AIStudioBackend implements APIBackend {
     },
   }
 
-  client!: ErnieBot
-
-  setup(client: ErnieBot) {
-    this.client = client
-  }
-
-  authHeaders() {
+  override authHeaders() {
     const { token = readEnv('AISTUDIO_ACCESS_TOKEN') } = this.client
 
     if (token == null) {
@@ -46,32 +36,8 @@ class AIStudioBackend implements APIBackend {
     return { authorization: `token ${token}` }
   }
 
-  async parseResponse<T>({ response, options, controller }: APIResponseProps): Promise<T> {
-    const headers = response.headers
-    if (options.stream) {
-      debug('response', response.status, response.url, headers, response.body)
-
-      // Note: there is an invariant here that isn't represented in the type system
-      // that if you set `stream: true` the response type must also be `Stream<T>`
-      return APIStream.fromSSEResponse(response, controller) as any
-    }
-
-    const contentType = headers.get('content-type')
-    if (contentType?.includes('application/json')) {
-      const json = await response.json()
-
-      debug('response', response.status, response.url, headers, json)
-
-      const errorCode = json.errorCode
-      if (errorCode === 0) return json.result as T
-
-      return Promise.reject(APIError.generate(errorCode, null, json['errorMsg'], headers))
-    }
-
-    // TODO handle blob, arraybuffer, other content types, etc.
-    const text = await response.text()
-    debug('response', response.status, response.url, headers, text)
-    return text as any as T
+  override transformResponse(type: 'json', data: any) {
+    return data.result
   }
 }
 
