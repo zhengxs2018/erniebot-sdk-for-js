@@ -31,6 +31,7 @@ $ pnpm add @zhengxs/erniebot
 import ERNIEBot from '@zhengxs/erniebot'
 
 const erniebot = new ERNIEBot({
+  apiType: 'aistudio',
   token: 'My API Access Token', // defaults to process.env["EB_ACCESS_TOKEN"]
 })
 

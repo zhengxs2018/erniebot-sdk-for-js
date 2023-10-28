@@ -19,12 +19,11 @@ $ pnpm add @zhengxs/erniebot
 
 ## 使用
 
-目前仅支持 [AI Studio](https://aistudio.baidu.com) 后端。
-
 ```ts
 import ErnieBot from '@zhengxs/erniebot'
 
 const erniebot = new ErnieBot({
+  apiType: 'aistudio',
   token: 'My API Access Token', // defaults to process.env["EB_ACCESS_TOKEN"]
 })
 
@@ -40,7 +39,7 @@ async function main() {
 main()
 ```
 
-**注意：** 后续兼容 openai，可能会调整 API 的输出格式。
+更多内容请查看 [ERNIEBot SDK for JavaScript](https://github.com/zhengxs2018/erniebot-sdk-for-js) 文档。
 
 ## License
 
