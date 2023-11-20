@@ -93,6 +93,10 @@ $ pnpm add --global @zhengxs/erniebot-cli
 $ erniebot
 ```
 
+## 关联项目
+
+- [基于 wechaty 的聊天助手插件](https://github.com/zhengxs2018/wechaty-plugin-assistant)
+
 ## 参考
 
 - [openai-node](https://github.com/openai/openai-node)
